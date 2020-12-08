@@ -2,7 +2,8 @@
 
 
 def check_sequence(sequence: str) -> bool:
-    error_flag = True
+    """ Проверяет правильность скобочной последовательности. """
+    error_flag = False
     commands_stack = {')': '(', '}': '{', ']': '['}
     stack = []
     for symbol in sequence:
@@ -11,13 +12,13 @@ def check_sequence(sequence: str) -> bool:
         elif symbol in commands_stack:
             c = stack.pop()
             if commands_stack[symbol] != c:
-                error_flag = False
+                error_flag = True
                 break
     return error_flag
 
 
 input_sequence = '()[{()[]}]'  # правильная
-print(check_sequence(input_sequence))   # True
+print(check_sequence(input_sequence))   # False
 
 input_sequence = '({[)}]'  # неправильная
-print(check_sequence(input_sequence))   # False
+print(check_sequence(input_sequence))   # True

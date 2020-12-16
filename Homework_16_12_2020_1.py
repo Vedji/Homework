@@ -15,7 +15,7 @@ class Node:
         v = val
         if val is not None:
             for y in val:
-                for x in '0123456789+-*/':
+                for x in '0123456789+-*/.':
                     if x in y:
                         v = y
         self._value = v
@@ -71,7 +71,6 @@ def minimum_priority(expression: list) -> int:
 
 
 def make_tree(value) -> Node:
-
     k = minimum_priority(value)
     if k < 0:  # создать лист
         tree = Node(value)
@@ -82,7 +81,7 @@ def make_tree(value) -> Node:
     return tree
 
 
-def computation_tree(tree: Node):
+def computation_tree(tree: Node) -> float:
     if tree.left is None:
         return float(tree.value)
     else:
@@ -101,25 +100,29 @@ def computation_tree(tree: Node):
 
 
 # input_data = '((((2+2)*2) - 2) * (10 * 5 - 8 * 9)) / 2 + (6 - 40)'  # == -100
-input_data = input('Введите выражение(только положительные числа): ')
+input_data = input('Введите выражение: ')
 
 
 if check_sequence(input_data):
     print('Ошибка в скобочной последовательности')
 else:
     arr = []
+    last_sign = False
     buff = ''
     for i in input_data:
-        if i in '0123456789.':
+        if i in '0123456789.' or (i == '-' and last_sign):
             buff += i
+            last_sign = False
         elif i in '()+-*/':
+            if i in '(+-*/':
+                last_sign = True
             if buff:
                 arr.append(buff)
                 buff = ''
             arr.append(i)
-
     if buff != '':
         for i in '01234567890-.':
             if i in buff:
                 arr.append(buff)
+                break
     print(computation_tree(make_tree(arr)))

@@ -12,12 +12,13 @@ class Node:
 
     @value.setter
     def value(self, val):
-        if val is not None and isinstance(val, (str, list)) and ('(' in val or ')' in val):
-            val = val[1:] if val[0] == '(' else val
-            val = val[:len(val) - 1] if val[len(val)-1] == ')' else val
-        if isinstance(val, list) and len(val) == 1:
-            val = val[0]
-        self._value = val
+        v = val
+        if val is not None:
+            for y in val:
+                for x in '0123456789+-*/':
+                    if x in y:
+                        v = y
+        self._value = v
 
 
 def check_sequence(sequence: str) -> bool:
@@ -51,20 +52,20 @@ def minimum_priority(expression: list) -> int:
         priority_sym = 2 if sim in '*/' else priority_sym
         return priority_sym
 
-    for i in range(len(expression)):
-        brackets += 1 if expression[i] == '(' else 0
-        brackets -= 1 if expression[i] == ')' else 0
-        if expression[i] in '+-*/':
+    for p in range(len(expression)):
+        brackets += 1 if expression[p] == '(' else 0
+        brackets -= 1 if expression[p] == ')' else 0
+        if expression[p] in '+-*/':
             if brackets not in priority:
-                priority[brackets] = [i]
+                priority[brackets] = [p]
             else:
-                priority[brackets] += [i]
+                priority[brackets] += [p]
 
     if priority != {}:
-        for i in priority[min(priority)]:
-            if priority_symbol(expression[i]) <= min_priority:
-                min_priority = priority_symbol(expression[i])
-                position = i
+        for br in priority[min(priority)]:
+            if priority_symbol(expression[br]) <= min_priority:
+                min_priority = priority_symbol(expression[br])
+                position = br
 
     return position
 
@@ -99,7 +100,8 @@ def computation_tree(tree: Node):
         return res
 
 
-input_data = '(10 - (4 * 2) - 1) * (20 * 2) / 8'
+# input_data = '((((2+2)*2) - 2) * (10 * 5 - 8 * 9)) / 2 + (6 - 40)'  # == -100
+input_data = input('Введите выражение(только положительные числа): ')
 
 
 if check_sequence(input_data):
@@ -115,7 +117,9 @@ else:
                 arr.append(buff)
                 buff = ''
             arr.append(i)
-    if buff != '' and buff in '0123456789':
-        arr.append(buff)
-    tr = make_tree(arr)
-    print(computation_tree(tr))
+
+    if buff != '':
+        for i in '01234567890-.':
+            if i in buff:
+                arr.append(buff)
+    print(computation_tree(make_tree(arr)))
